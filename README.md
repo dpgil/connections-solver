@@ -23,4 +23,4 @@ https://huggingface.co/datasets/eric27n/NYT-Connections.
 
 ## Unit tests
 
-To run unit tests, run `python3 -m unittest -p "*_test.py"`.
+To run unit tests, run `python3 -m unittest discover -p "*_test.py"`.

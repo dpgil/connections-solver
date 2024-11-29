@@ -117,7 +117,7 @@ def output_results(stats: SimulatorStats):
 
 def main():
     puzzles = load_puzzles("puzzles.csv")
-    num_puzzles = 10
+    num_puzzles = 3
     stats = simulator(puzzles[:num_puzzles], kmeans_model)
     output_results(stats)
 
