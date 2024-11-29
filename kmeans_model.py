@@ -27,5 +27,5 @@ def kmeans_model(words: List[str]) -> List[List[str]]:
         if cluster not in result:
             result[cluster] = []
         result[cluster].append(words[word_i])
-    return result
+    return list(result.values())
 
