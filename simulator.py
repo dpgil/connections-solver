@@ -97,10 +97,7 @@ def simulator(puzzles: List[Puzzle], model) -> SimulatorStats:
     return stats
 
 
-def main():
-    puzzles = load_puzzles("puzzles.csv")
-    stats = simulator(puzzles[:1], kmeans_model)
-
+def output_results(stats: SimulatorStats):
     correct_puzzles = stats.correct
     total_puzzles = stats.total
     puzzle_pct = round(correct_puzzles / total_puzzles * 100, 2)
@@ -116,6 +113,13 @@ def main():
     print(
         f"Total groups: {total_groups}, Correct groups: {correct_groups}, Pct: {group_pct}"
     )
+
+
+def main():
+    puzzles = load_puzzles("puzzles.csv")
+    num_puzzles = 10
+    stats = simulator(puzzles[:num_puzzles], kmeans_model)
+    output_results(stats)
 
 
 if __name__ == "__main__":
