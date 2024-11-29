@@ -1,5 +1,6 @@
 import csv
 from typing import List
+from kmeans_model import kmeans_model
 
 
 class Group:
@@ -58,15 +59,6 @@ def load_puzzles(filename: str) -> List[Puzzle]:
     raise Exception("could not load puzzles")
 
 
-def glove_model(words: List[str]) -> List[List[str]]:
-    return [
-        ["HAIL", "RAIN", "SLEET", "SNOW"],
-        ["BUCKS", "HEAT", "JAZZ", "NETS"],
-        ["OPTION", "RETURN", "SHIFT", "TAB"],
-        ["KAYAK", "LEVEL", "MOM", "RACECAR"],
-    ]
-
-
 class SimulatorStats:
     def __init__(self):
         self.total = 0
@@ -79,8 +71,9 @@ class SimulatorStats:
 
 
 def verify_result(puzzle: Puzzle, result: List[List[str]]) -> bool:
-    group_sets = [set(group.words) for group in puzzle.groups]
-    result_sets = [set(r) for r in result]
+    group_sets = [set(sorted(group.words)) for group in puzzle.groups]
+    result = list(result.values())
+    result_sets = [set(sorted(r)) for r in result]
     return sorted(group_sets) == sorted(result_sets)
 
 
@@ -95,7 +88,7 @@ def simulator(puzzles: List[Puzzle], model):
 
 def main():
     puzzles = load_puzzles("puzzles.csv")
-    stats = simulator(puzzles[:3], glove_model)
+    stats = simulator(puzzles[:100], kmeans_model)
     print(
         f"Model result: Total: {stats.total}, Correct: {stats.correct}, Pct: {round((stats.correct / stats.total) * 100, 2)}"
     )
