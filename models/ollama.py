@@ -15,11 +15,11 @@ def ollama_model(words: List[str]) -> List[List[str]]:
             f"- The words BUCKS, HEAT, JAZZ, NETS form a group because they are all NBA team mascots. "
             f"Your task is to group the following 16 words into 4 groups of 4 words each. "
             f"The groups should be based on any shared characteristics the words might have. "
-            f"Please output the groups as a list of lists in the following exact format (comma-separated and with double quotes), and with no other text: [[\"word1\", \"word2\", ...], [\"word5\", \"word6\", ...], ...]. "
+            f'Please output the groups as a list of lists in the following exact format (comma-separated and with double quotes), and with no other text: [["word1", "word2", ...], ["word5", "word6", ...], ...]. '
             f"Here are the 16 words: {words}"
         ),
     )
-    raw_response = resp['response']
-    cleaned_response = '[' + raw_response.replace("\n", "") + ']'
+    raw_response = resp["response"]
+    cleaned_response = "[" + raw_response.replace("\n", "") + "]"
     parsed_data = json.loads(cleaned_response)
     return parsed_data

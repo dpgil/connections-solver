@@ -3,11 +3,11 @@ import csv
 import concurrent.futures
 from typing import List
 import time
-from kmeans_model import KMeansModel
-from word_net_model import WordNetModel
-from mock_model import mock_model
-from cosine_similarity_model import CosineSimilarityModel
-from ollama_model import ollama_model
+from models.kmeans import KMeansModel
+from models.wordnet import WordNetModel
+from models.mock import mock_model
+from models.cosine_similarity import CosineSimilarityModel
+from models.ollama import ollama_model
 
 
 class Group:
