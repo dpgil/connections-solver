@@ -1,6 +1,7 @@
 import csv
+import concurrent.futures
 from typing import List
-from kmeans_model import kmeans_model
+from kmeans_model import KMeansModel
 
 
 class Group:
@@ -97,7 +98,23 @@ def simulator(puzzles: List[Puzzle], model) -> SimulatorStats:
     return stats
 
 
-def output_results(stats: SimulatorStats):
+def parallel_simulator(puzzles: List[Puzzle], model) -> SimulatorStats:
+    stats = SimulatorStats()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        inputs = [p.all_words for p in puzzles]
+        results = list(executor.map(model, inputs))
+        for i, result in enumerate(results):
+            # Could parallelize this but I don't think it's computationally expensive.
+            matching_groups = check_attempt(puzzles[i].get_answers(), result)
+            stats.inc(matching_groups)
+        return stats
+    raise Exception("error running parallel simulator")
+
+
+def output_results(secs: int, stats: SimulatorStats):
+    print(f"Done, took {secs:.4f} seconds")
+    print("------")
+
     correct_puzzles = stats.correct
     total_puzzles = stats.total
     puzzle_pct = round(correct_puzzles / total_puzzles * 100, 2)
@@ -115,11 +132,17 @@ def output_results(stats: SimulatorStats):
     )
 
 
+import time
+
+
 def main():
     puzzles = load_puzzles("puzzles.csv")
-    num_puzzles = 3
-    stats = simulator(puzzles[:num_puzzles], kmeans_model)
-    output_results(stats)
+    num_puzzles = 5
+
+    start_time = time.time()
+    stats = simulator(puzzles[:num_puzzles], KMeansModel().run)
+    end_time = time.time()
+    output_results(end_time - start_time, stats)
 
 
 if __name__ == "__main__":
