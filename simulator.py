@@ -1,3 +1,4 @@
+import argparse
 import csv
 import concurrent.futures
 from typing import List
@@ -90,12 +91,15 @@ class SimulatorStats:
         if matching_groups == 4:
             self.correct += 1
 
-
-def simulator(puzzles: List[Puzzle], model) -> SimulatorStats:
+def simulator(puzzles: List[Puzzle], model, debug=False) -> SimulatorStats:
     stats = SimulatorStats()
     for puzzle in puzzles:
         result = model(puzzle.all_words)
         matching_groups = check_attempt(puzzle.get_answers(), result)
+        if matching_groups != 4 and debug:
+            for inner in result:
+                inner.sort()
+            print(f"Answer: {puzzle.get_answers()}\nModel:  {result}")
         stats.inc(matching_groups)
     return stats
 
@@ -135,11 +139,14 @@ def output_results(secs: int, stats: SimulatorStats):
 
 
 def main():
-    puzzles = load_puzzles("puzzles.csv")
-    num_puzzles = 5
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", action="store_true", help="Whether to output debug information")
+    parser.add_argument("-n", type=int, default=5, help="Number of puzzles to run against the model (default 5)")
+    args = parser.parse_args()
 
+    puzzles = load_puzzles("puzzles.csv")
     start_time = time.time()
-    stats = simulator(puzzles[:num_puzzles], CosineSimilarityModel().run)
+    stats = simulator(puzzles[:args.n], CosineSimilarityModel().run, debug=args.debug)
     end_time = time.time()
     output_results(end_time - start_time, stats)
 

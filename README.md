@@ -9,8 +9,11 @@ and outputs the performance of the model. It also includes various models in att
 ## How to use
 
 Run the simulator with `python3 simulator.py`.
-The simulator will run the number of puzzles specified in `main()`,
+
+The simulator will run the number of puzzles specified with the flag `-n <num_puzzles>`,
 and output stats based on the number of puzzles and individual groups the given model got right.
+
+Run the simulator with `--debug` for comparisons between the puzzle answer and the model output.
 
 To implement a new model, implement a function that takes a list of 16 words
 and outputs a `List[List[str]]`, which is the list of groups for the attempted solution
