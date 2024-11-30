@@ -42,7 +42,7 @@ def kmeans_model(embedding_model):
 class KMeansModel:
     def __init__(self):
         self.embedding_model = SentenceTransformer("all-mpnet-base-v2")
-        self.embedding_model.cpu()  # Required when using multiprocessing
+        # self.embedding_model.cpu()  # Required when using multiprocessing
 
     def run(self, words: List[str]):
         embeddings = self.embedding_model.encode(words)

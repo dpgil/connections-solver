@@ -1,7 +1,9 @@
 import csv
 import concurrent.futures
 from typing import List
+import time
 from kmeans_model import KMeansModel
+from cosine_similarity_model import CosineSimilarityModel
 
 
 class Group:
@@ -132,15 +134,12 @@ def output_results(secs: int, stats: SimulatorStats):
     )
 
 
-import time
-
-
 def main():
     puzzles = load_puzzles("puzzles.csv")
     num_puzzles = 5
 
     start_time = time.time()
-    stats = simulator(puzzles[:num_puzzles], KMeansModel().run)
+    stats = simulator(puzzles[:num_puzzles], CosineSimilarityModel().run)
     end_time = time.time()
     output_results(end_time - start_time, stats)
 
