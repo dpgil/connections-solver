@@ -4,6 +4,8 @@ import concurrent.futures
 from typing import List
 import time
 from kmeans_model import KMeansModel
+from word_net_model import WordNetModel
+from mock_model import mock_model
 from cosine_similarity_model import CosineSimilarityModel
 from ollama_model import ollama_model
 
@@ -101,16 +103,17 @@ class SimulatorStats:
 def simulator(puzzles: List[Puzzle], model, debug=False) -> SimulatorStats:
     stats = SimulatorStats()
     for puzzle in puzzles:
+        result = model(puzzle.all_words)
         try:
-            result = model(puzzle.all_words)
             matching_groups = check_attempt(puzzle.get_answers(), result)
+        except Exception:
+            stats.invalid_attempt()
+        else:
             if matching_groups != 4 and debug:
                 for inner in result:
                     inner.sort()
                 print(f"Answer: {puzzle.get_answers()}\nModel:  {result}")
             stats.inc(matching_groups)
-        except Exception:
-            stats.invalid_attempt()
     return stats
 
 
@@ -148,6 +151,21 @@ def output_results(secs: int, stats: SimulatorStats):
     print(f"Invalid attempts: {stats.invalid_attempts}")
 
 
+def get_model(model_name: str):
+    if model_name == "cosine_similarity":
+        return CosineSimilarityModel().run
+    elif model_name == "ollama":
+        return ollama_model
+    elif model_name == "kmeans":
+        return KMeansModel().run
+    elif model_name == "wordnet":
+        return WordNetModel().run
+    elif model_name == "mock":
+        return mock_model
+    else:
+        raise Exception("unknown model")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -164,12 +182,19 @@ def main():
         default=5,
         help="Number of puzzles to run against the model (default 5)",
     )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="cosine_similarity",
+        help='Specify which model to use (default "cosine_similarity")',
+    )
     args = parser.parse_args()
 
     puzzles = load_puzzles("puzzles.csv")
     input = puzzles[: args.n]
-    model = CosineSimilarityModel().run
+    model = get_model(args.model)
     sim_fn = parallel_simulator if args.parallel else simulator
+    print(f"Running simulator for {args.n} puzzles with model {args.model}")
 
     start_time = time.time()
     stats = sim_fn(input, model, debug=args.debug)

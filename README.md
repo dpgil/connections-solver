@@ -10,8 +10,11 @@ and outputs the performance of the model. It also includes various models in att
 
 Run the simulator with `python3 simulator.py`.
 
-The simulator will run the number of puzzles specified with the flag `-n <num_puzzles>`,
+The simulator will run the number of puzzles specified with the flag `-n <num_puzzles>`
 and output stats based on the number of puzzles and individual groups the given model got right.
+
+Switch the model type with the flag `--model <model_name>`, where the model name is one of
+`cosine_similarity`, `kmeans`, `wordnet`, `ollama`, or `mock`.
 
 Run the simulator with `--debug` for comparisons between the puzzle answer and the model output.
 
