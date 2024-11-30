@@ -5,6 +5,7 @@ from typing import List
 import time
 from kmeans_model import KMeansModel
 from cosine_similarity_model import CosineSimilarityModel
+from ollama_model import ollama_model
 
 
 class Group:
@@ -84,6 +85,11 @@ class SimulatorStats:
         self.total = 0
         self.correct = 0
         self.matching_groups = 0
+        self.invalid_attempts = 0
+
+    def invalid_attempt(self):
+        self.total += 1
+        self.invalid_attempts += 1
 
     def inc(self, matching_groups: int):
         self.total += 1
@@ -94,13 +100,16 @@ class SimulatorStats:
 def simulator(puzzles: List[Puzzle], model, debug=False) -> SimulatorStats:
     stats = SimulatorStats()
     for puzzle in puzzles:
-        result = model(puzzle.all_words)
-        matching_groups = check_attempt(puzzle.get_answers(), result)
-        if matching_groups != 4 and debug:
-            for inner in result:
-                inner.sort()
-            print(f"Answer: {puzzle.get_answers()}\nModel:  {result}")
-        stats.inc(matching_groups)
+        try:
+            result = model(puzzle.all_words)
+            matching_groups = check_attempt(puzzle.get_answers(), result)
+            if matching_groups != 4 and debug:
+                for inner in result:
+                    inner.sort()
+                print(f"Answer: {puzzle.get_answers()}\nModel:  {result}")
+            stats.inc(matching_groups)
+        except Exception:
+            stats.invalid_attempt()
     return stats
 
 
@@ -136,6 +145,9 @@ def output_results(secs: int, stats: SimulatorStats):
     print(
         f"Total groups: {total_groups}, Correct groups: {correct_groups}, Pct: {group_pct}"
     )
+    print(
+        f"Invalid attempts: {stats.invalid_attempts}"
+    )
 
 
 def main():
@@ -146,7 +158,7 @@ def main():
 
     puzzles = load_puzzles("puzzles.csv")
     start_time = time.time()
-    stats = simulator(puzzles[:args.n], CosineSimilarityModel().run, debug=args.debug)
+    stats = simulator(puzzles[:args.n], ollama_model, debug=args.debug)
     end_time = time.time()
     output_results(end_time - start_time, stats)
 
