@@ -8,6 +8,7 @@ import itertools
 class CosineSimilarityModel:
     def __init__(self):
         self.embedding_model = SentenceTransformer("all-mpnet-base-v2")
+        # self.embedding_model.cpu()  # Required when using multiprocessing
 
     # run_once takes the 4 words it's most confident about
     def run_once(self, embeddings, words: List[str]):

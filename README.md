@@ -15,6 +15,9 @@ and output stats based on the number of puzzles and individual groups the given 
 
 Run the simulator with `--debug` for comparisons between the puzzle answer and the model output.
 
+Run the simulator with `--parallel` to parallelize puzzle solving. Note: some ML libraries don't work well with parallelism
+so this may actually slow down execution.
+
 To implement a new model, implement a function that takes a list of 16 words
 and outputs a `List[List[str]]`, which is the list of groups for the attempted solution
 where each group contains 4 words.

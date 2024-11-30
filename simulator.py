@@ -97,6 +97,7 @@ class SimulatorStats:
         if matching_groups == 4:
             self.correct += 1
 
+
 def simulator(puzzles: List[Puzzle], model, debug=False) -> SimulatorStats:
     stats = SimulatorStats()
     for puzzle in puzzles:
@@ -113,7 +114,7 @@ def simulator(puzzles: List[Puzzle], model, debug=False) -> SimulatorStats:
     return stats
 
 
-def parallel_simulator(puzzles: List[Puzzle], model) -> SimulatorStats:
+def parallel_simulator(puzzles: List[Puzzle], model, debug=False) -> SimulatorStats:
     stats = SimulatorStats()
     with concurrent.futures.ProcessPoolExecutor() as executor:
         inputs = [p.all_words for p in puzzles]
@@ -138,28 +139,42 @@ def output_results(secs: int, stats: SimulatorStats):
     total_groups = total_puzzles * 4
     group_pct = round(correct_groups / total_groups * 100, 2)
 
-    print(f"Model result")
     print(
         f"Total puzzles: {total_puzzles}, Correct puzzles: {correct_puzzles}, Pct: {puzzle_pct}"
     )
     print(
         f"Total groups: {total_groups}, Correct groups: {correct_groups}, Pct: {group_pct}"
     )
-    print(
-        f"Invalid attempts: {stats.invalid_attempts}"
-    )
+    print(f"Invalid attempts: {stats.invalid_attempts}")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug", action="store_true", help="Whether to output debug information")
-    parser.add_argument("-n", type=int, default=5, help="Number of puzzles to run against the model (default 5)")
+    parser.add_argument(
+        "--debug", action="store_true", help="Whether to output debug information"
+    )
+    parser.add_argument(
+        "--parallel",
+        action="store_true",
+        help="Run the simulator in parallel",
+    )
+    parser.add_argument(
+        "-n",
+        type=int,
+        default=5,
+        help="Number of puzzles to run against the model (default 5)",
+    )
     args = parser.parse_args()
 
     puzzles = load_puzzles("puzzles.csv")
+    input = puzzles[: args.n]
+    model = CosineSimilarityModel().run
+    sim_fn = parallel_simulator if args.parallel else simulator
+
     start_time = time.time()
-    stats = simulator(puzzles[:args.n], ollama_model, debug=args.debug)
+    stats = sim_fn(input, model, debug=args.debug)
     end_time = time.time()
+
     output_results(end_time - start_time, stats)
 
 
