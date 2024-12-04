@@ -21,6 +21,8 @@ Run the simulator with `--debug` for comparisons between the puzzle answer and t
 Run the simulator with `--parallel` to parallelize puzzle solving. Note: some ML libraries don't work well with parallelism
 so this may actually slow down execution.
 
+Use `--offset <num>` to start from a different puzzle in the list.
+
 To implement a new model, implement a function that takes a list of 16 words
 and outputs a `List[List[str]]`, which is the list of groups for the attempted solution
 where each group contains 4 words.

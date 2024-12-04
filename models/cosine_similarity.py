@@ -5,7 +5,8 @@ import numpy as np
 import itertools
 
 
-# Finds 4 words in the list with the highest similarity.
+# Finds the combination of 4 words in the list with the highest pairwise similarity.
+# Guaranteed to return a group of 4.
 def cosine_similarity(embeddings, words: List[str]) -> List[str]:
     n = len(words)
     similarity_matrix = np.zeros((n, n))

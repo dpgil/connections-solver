@@ -179,8 +179,8 @@ def main():
     parser.add_argument(
         "-n",
         type=int,
-        default=5,
-        help="Number of puzzles to run against the model (default 5)",
+        default=1,
+        help="Number of puzzles to run against the model (default 1)",
     )
     parser.add_argument(
         "--model",
@@ -188,13 +188,22 @@ def main():
         default="cosine_similarity",
         help='Specify which model to use (default "cosine_similarity")',
     )
+    parser.add_argument(
+        "--offset",
+        type=int,
+        default=0,
+        help="Offset at which to start reading the puzzles",
+    )
     args = parser.parse_args()
 
     puzzles = load_puzzles("puzzles.csv")
-    input = puzzles[: args.n]
+    input = puzzles[args.offset: args.offset+args.n]
     model = get_model(args.model)
     sim_fn = parallel_simulator if args.parallel else simulator
-    print(f"Running simulator for {args.n} puzzles with model {args.model}")
+    msg = f"Running simulator for {args.n} puzzles with model {args.model}"
+    if args.offset > 0:
+        msg += f" starting at offset {args.offset}"
+    print(msg)
 
     start_time = time.time()
     stats = sim_fn(input, model, debug=args.debug)
