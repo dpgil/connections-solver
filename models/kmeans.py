@@ -46,8 +46,7 @@ class KMeansModel:
 
     def run(self, words: List[str]):
         embeddings = self.embedding_model.encode(words)
-        embeddings = embeddings - embeddings.mean(axis=1, keepdims=True)
-        embeddings = embeddings / embeddings.std(axis=1, keepdims=True)
+        embeddings = embeddings / np.sum(np.abs(embeddings), axis=1, keepdims=True)
         res = get_even_clusters(embeddings, 4)
         result = {}
         for word_i, cluster in enumerate(res):

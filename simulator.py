@@ -3,12 +3,6 @@ import csv
 import concurrent.futures
 from typing import List
 import time
-from models.kmeans import KMeansModel
-from models.wordnet import WordNetModel
-from models.mock import mock_model
-from models.cosine_similarity import CosineSimilarityModel
-from models.ollama import ollama_model
-
 
 class Group:
     def __init__(self):
@@ -153,14 +147,19 @@ def output_results(secs: int, stats: SimulatorStats):
 
 def get_model(model_name: str):
     if model_name == "cosine_similarity":
+        from models.cosine_similarity import CosineSimilarityModel
         return CosineSimilarityModel().run
     elif model_name == "ollama":
+        from models.ollama import ollama_model
         return ollama_model
     elif model_name == "kmeans":
+        from models.kmeans import KMeansModel
         return KMeansModel().run
     elif model_name == "wordnet":
+        from models.wordnet import WordNetModel
         return WordNetModel().run
     elif model_name == "mock":
+        from models.mock import mock_model
         return mock_model
     else:
         raise Exception("unknown model")
