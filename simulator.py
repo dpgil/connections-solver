@@ -5,6 +5,7 @@ from typing import List
 import time
 from models.kmeans import KMeansModel
 from models.wordnet import WordNetModel
+from models.wikipedia import WikipediaModel
 from models.mock import mock_model
 from models.cosine_similarity import CosineSimilarityModel
 from models.ollama import ollama_model
@@ -162,6 +163,8 @@ def get_model(model_name: str):
         return WordNetModel().run
     elif model_name == "mock":
         return mock_model
+    elif model_name == "wikipedia":
+        return WikipediaModel().run
     else:
         raise Exception("unknown model")
 

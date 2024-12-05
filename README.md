@@ -27,6 +27,8 @@ To implement a new model, implement a function that takes a list of 16 words
 and outputs a `List[List[str]]`, which is the list of groups for the attempted solution
 where each group contains 4 words.
 
+**Note: if you see something like ModuleNotFound error, run `source venv/bin/activate`**
+
 ## Dataset
 
 The dataset for NYT Connections puzzles is pulled from

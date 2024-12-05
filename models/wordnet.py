@@ -2,7 +2,6 @@ import itertools
 from nltk.corpus import wordnet
 from sentence_transformers import SentenceTransformer
 from typing import List
-import numpy as np
 from models.cosine_similarity import cosine_similarity
 
 
@@ -64,14 +63,17 @@ class WordNetModel:
     def __init__(self):
         self.embedding_model = SentenceTransformer("all-mpnet-base-v2")
 
+    def get_group(self, words: List[str]) -> List[str]:
+        group = wordnet_group(words)
+        if not group:
+            embeddings = self.embedding_model.encode(words)
+            group = cosine_similarity(embeddings, words)
+        return group
+
     def run(self, words: List[str]) -> List[List[str]]:
         groups = []
         while words:
-            group = wordnet_group(words)
-            if not group:
-                # Fall back to cosine similarity to guarantee a group of size 4.
-                embeddings = self.embedding_model.encode(words)
-                group = cosine_similarity(embeddings, words)
+            group = self.get_group(words)
             groups.append(group)
             for word in group:
                 words.remove(word)
